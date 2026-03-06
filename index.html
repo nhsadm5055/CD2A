@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHURCH DOCTRINES Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; text-align: center; }
+        header { background: #228B22; color: white; padding: 10px; }
+        #intro { display: flex; flex-direction: column; justify-content: center; height: 100vh; font-size: 2em; }
+        #countdown { color: red; font-size: 4em; }
+        #quiz { display: none; }
+        #question { background: #90EE90; padding: 20px; margin: 10px; border-radius: 10px; font-size: 1.1em; }
+        .option { background: white; padding: 10px; margin: 5px; border-radius: 20px; cursor: pointer; border: 1px solid #ccc; }
+        .option:hover { background: #e0e0e0; }
+        #timer { font-weight: bold; color: red; }
+        #score { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CHURCH DOCTRINES Quiz</h1>
+    </header>
+    <div id="intro">
+        <div id="countdown">4</div>
+        <p>HUMANDA NA...</p>
+    </div>
+    <div id="quiz">
+        <p id="timer">TIME: 00:03:00</p>
+        <p id="score">SCORE: 0</p>
+        <p id="question"></p>
+        <div id="options"></div>
+    </div>
+
+    <script>
+        // Questions based on PDF TOC (sample - expand with more)
+        const questions = [
+            { question: "Ano ang pinatutunayan sa LESSON 1?", options: ["Job 26:7 at MB", "Nahum 2:4", "2 Pedro 1:20-21", "2 Pedro 3:7,10"], correct: 0, verse: "Juan 8:40" },
+            { question: "Ano ang batayan sa LESSON 2?", options: ["Exodo 6:2-3", "Awit 83:18", "Luc. 1:31-32", "I Cor. 15:27-28"], correct: 0, verse: "Exodo 6:2-3" },
+            // Add more for lessons 3-21, e.g.:
+            { question: "Ano ang argumento sa LESSON 4?", options: ["Gen. 1:26", "Mateo 28:19", "Judas 1:20", "Apocalipsis 4:8"], correct: 0, verse: "Gen. 1:26" },
+            // ... (add 2-5 per lesson based on PDF)
+            { question: "Ano ang dahilan sa LESSON 21?", options: ["II Cor. 5:10 MB", "Apoc. 22:12", "Roma 8:1 MB", "Col. 1:18"], correct: 0, verse: "II Cor. 5:10 MB" }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 180; // 3 minutes in seconds
+        let timerInterval;
+
+        // Countdown intro
+        let count = 4;
+        const countdownInterval = setInterval(() => {
+            count--;
+            document.getElementById('countdown').innerText = count;
+            if (count === 0) {
+                clearInterval(countdownInterval);
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('quiz').style.display = 'block';
+                startQuiz();
+            }
+        }, 1000);
+
+        function startQuiz() {
+            loadQuestion();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                let min = Math.floor(timeLeft / 60);
+                let sec = timeLeft % 60;
+                document.getElementById('timer').innerText = `TIME: 00:${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert('Time's up! Score: ' + score);
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question').innerText = q.question;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const button = document.createElement('div');
+                button.className = 'option';
+                button.innerText = opt;
+                button.onclick = () => checkAnswer(index);
+                optionsDiv.appendChild(button);
+            });
+            document.getElementById('verses').innerText = `Based on: ${q.verse}`; // Add verses display if needed
+        }
+
+        function checkAnswer(selected) {
+            const correct = questions[currentQuestion].correct;
+            if (selected === correct) {
+                score++;
+                document.getElementById('score').innerText = `SCORE: ${score}`;
+                alert('Tama!'); // Green feedback
+            } else {
+                alert('Mali!'); // Red feedback
+            }
+            currentQuestion = (currentQuestion + 1) % questions.length;
+            loadQuestion();
+        }
+    </script>
+</body>
+</html>
